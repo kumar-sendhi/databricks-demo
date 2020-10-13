@@ -1,28 +1,23 @@
-# Specify the trigger event to start the build pipeline.
-# In this case, new code merged into the release branch initiates a new build.
-trigger:
-- master
+# Azure Databricks Build Pipeline
+# azure-pipelines.yml
 
-# Specify the OS for the agent
+trigger:
+- release
+
 pool:
   name: Hosted Ubuntu 1604
 
-# Install Python. The version must match the version on the Databricks cluster.
 steps:
 - task: UsePythonVersion@0
   displayName: 'Use Python 3.7'
   inputs:
     versionSpec: 3.7
 
-# Install required Python modules, including databricks-connect, required to execute a unit test
-# on a cluster.
 - script: |
     pip install pytest requests setuptools wheel
     pip install -U databricks-connect==6.4.*
   displayName: 'Load Python Dependencies'
 
-# Use environment variables to pass Databricks login information to the Databricks Connect
-# configuration function
 - script: |
     echo "y
     $(WORKSPACE-REGION-URL)
@@ -31,18 +26,18 @@ steps:
     $(WORKSPACE-ORG-ID)
     15001" | databricks-connect configure
   displayName: 'Configure DBConnect'
-  
+
 - checkout: self
   persistCredentials: true
   clean: true
 
-- script: git checkout master
+- script: git checkout release
   displayName: 'Get Latest Branch'
 
 - script: |
-    python -m pytest --junit-xml=$(Build.Repository.LocalPath)/logs/TEST-LOCAL.xml $(Build.Repository.LocalPath)/libraries/python/dbxdemo/test*.py || true
-    ls logs
-  displayName: 'Run Python Unit Tests for library code'
+    python -m pytest --junit-xml=$(Build.Repository.LocalPath)/logs/TEST-LOCAL.xml
+$(Build.Repository.LocalPath)/libraries/python/dbxdemo/test*.py || true
+displayName: 'Run Python Unit Tests for library code'
 
 - task: PublishTestResults@2
   inputs:
@@ -67,7 +62,6 @@ steps:
 
   displayName: 'Get Changes'
 
-# Create the deployment artifact and publish it to the artifact repository
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(Build.BinariesDirectory)'
