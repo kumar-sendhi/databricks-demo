@@ -2,7 +2,7 @@
 # azure-pipelines.yml
 
 trigger:
-- release
+- master
 
 pool:
   name: Hosted Ubuntu 1604
@@ -31,19 +31,10 @@ steps:
   persistCredentials: true
   clean: true
 
-- script: git checkout release
+- script: git checkout master
   displayName: 'Get Latest Branch'
 
-- script: |
-    python -m pytest --junit-xml=$(Build.Repository.LocalPath)/logs/TEST-LOCAL.xml
-$(Build.Repository.LocalPath)/libraries/python/dbxdemo/test*.py || true
-displayName: 'Run Python Unit Tests for library code'
 
-- task: PublishTestResults@2
-  inputs:
-    testResultsFiles: '**/TEST-*.xml'
-    failTaskOnFailedTests: true
-    publishRunAttachments: true
 
 - script: |
     cd $(Build.Repository.LocalPath)/libraries/python/dbxdemo
