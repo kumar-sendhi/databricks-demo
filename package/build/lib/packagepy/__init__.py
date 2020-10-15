@@ -1,0 +1,1 @@
+print("Inside __init__.py of the package")
