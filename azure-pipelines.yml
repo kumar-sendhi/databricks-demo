@@ -44,8 +44,8 @@ steps:
 - script: |
     git diff --name-only --diff-filter=AMR HEAD^1 HEAD | xargs -I '{}' cp --parents -r '{}' $(Build.BinariesDirectory)
 
-    mkdir -p $(Build.BinariesDirectory)/libraries/python/libs
-    cp $(Build.Repository.LocalPath)/libraries/python/dbxdemo/dist/*.* $(Build.BinariesDirectory)/libraries/python/libs
+    mkdir -p $(Build.BinariesDirectory)/package/libs
+    cp $(Build.Repository.LocalPath)/package/dist/*.* $(Build.BinariesDirectory)/package/libs
 
     mkdir -p $(Build.BinariesDirectory)/cicd-scripts
     cp $(Build.Repository.LocalPath)/cicd-scripts/*.* $(Build.BinariesDirectory)/cicd-scripts
