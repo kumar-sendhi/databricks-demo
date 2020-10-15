@@ -2,7 +2,7 @@
 # azure-pipelines.yml
 
 trigger:
-- master
+- release
 
 pool:
   name: Hosted Ubuntu 1604
@@ -31,9 +31,8 @@ steps:
   persistCredentials: true
   clean: true
 
-- script: git checkout master
+- script: git checkout release
   displayName: 'Get Latest Branch'
-
 
 
 - script: |
